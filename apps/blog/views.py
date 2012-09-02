@@ -7,5 +7,8 @@ class BlogIndex(TemplateView):
 
   def get_context_data(self, **kwargs):
     context = super(BlogIndex, self).get_context_data(**kwargs)
-    context['entries'] = Entry.all().order('-created_at').fetch(limit=10)
+    context['entries'] = Entry.all() \
+                         .filter('status =', 'published') \
+                         .order('-published_at') \
+                         .fetch(limit=10)
     return context

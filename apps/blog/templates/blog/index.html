@@ -2,7 +2,10 @@
 {% for entry in entries %}
   <h2>{{entry.title}}</h2>
   <div class="meta">
-    <span class="created-at">{{entry.created_at}}</span>
+    <span class="created-at">Published {{entry.published_at}}</span>
+    {% if entry.is_updated %}
+      <span class="updated-at">Last update: {{entry.updated_at}}</span>
+    {% endif %}
   </div>
   <p>{{entry.content}}</p>
   <ul class="tags">
