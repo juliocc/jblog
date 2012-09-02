@@ -9,9 +9,11 @@ def pypath():
 
     # Set up the python path using dev_appserver
     for path in os.environ.get('PATH').split(os.pathsep):
+        # ignore non-existing directories in PATH
+        if not os.path.exists(path):
+            continue
         if 'dev_appserver.py' in os.listdir(path):
-            sdk_path = os.path.dirname(
-                os.readlink(os.path.join(path, 'dev_appserver.py')))
+            sdk_path = os.path.dirname(os.path.join(path, 'dev_appserver.py'))
             sys.path.insert(0, sdk_path)
             from dev_appserver import fix_sys_path
             fix_sys_path()
