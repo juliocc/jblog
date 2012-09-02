@@ -1,0 +1,13 @@
+
+{% for entry in entries %}
+  <h2>{{entry.title}}</h2>
+  <div class="meta">
+    <span class="created-at">{{entry.created_at}}</span>
+  </div>
+  <p>{{entry.content}}</p>
+  <ul class="tags">
+    {% for tag in entry.tags %}
+      <li>{{tag}}</li>
+    {% endfor %}
+  </ul>
+{% endfor %}

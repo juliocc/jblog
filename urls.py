@@ -1,6 +1,6 @@
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, include
 
-urlpatterns = patterns(
-    '',
+urlpatterns = patterns('',
     (r'', include('core.urls')),
+    (r'^blog/', include('apps.blog.urls')),
 )
