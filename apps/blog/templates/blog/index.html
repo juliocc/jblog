@@ -16,7 +16,7 @@
         {% endif %}
       </div>
       {# let me use HTML, I promise I'll behave ;) #}
-      {{ entry.content|safe|truncatewords_html:40 }}
+      {{ entry.excerpt|safe }}
       <p><a href="{% url entry_view slug=entry.slug %}">Read more</a></p>
       <div class="tags">
         <strong>Tags:</strong>

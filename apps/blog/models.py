@@ -2,7 +2,7 @@ import random
 from datetime import datetime, timedelta
 import re
 
-from django.template.defaultfilters import slugify
+from django.template.defaultfilters import slugify, truncatewords_html
 from google.appengine.ext import db
 from helpers.db import HookedModel
 
@@ -56,6 +56,13 @@ class Entry(HookedModel):
         # updated_at a few milliseconds after published_at
         return self.updated_at > (self.published_at + 
                                   timedelta(seconds=1))
+
+    @property
+    def excerpt(self):
+        parts = self.content.split('<!--more-->', 1)
+        if len(parts) == 1:
+            return truncatewords_html(parts[0], 40)
+        return parts[0]
 
     # TODO:
     #  author
