@@ -4,20 +4,7 @@ import re
 
 from django.template.defaultfilters import slugify, truncatewords_html
 from google.appengine.ext import db
-from helpers.db import HookedModel
-
-tag_re = re.compile('[^\w _-]')
-class TagListProperty(db.StringListProperty):
-    def validate(self, value):
-        # tags should only contain leters, numbers, whitespace and dashes
-        value = super(TagListProperty, self).validate(value)
-        for tag in value:
-            if tag_re.search(tag):
-                raise db.BadValueError('tags should only contain letters, '
-                                       'numbers, whitespace and dashes')
-
-        return value
-            
+from helpers.db import HookedModel            
 
 class Entry(HookedModel):
     title = db.StringProperty(required=True)
