@@ -43,7 +43,8 @@ class Entry(HookedModel):
             while 1:
                 slug = str(slugify(extra))
                 exists = Entry.all(keys_only=True).filter('slug =', slug).fetch(limit=1)
-                if not exists:
+                # 'create' and 'all' are special urls, avoid using them as slugs
+                if not exists and slug not in ('create', 'all'):
                     break
 
                 extra = extra + "-" + str(random.randrange(100))
