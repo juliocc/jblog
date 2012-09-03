@@ -2,25 +2,64 @@
 
 {% block content %}
 
-      <h2>{{entry.title}}</h2>
-      <div class="meta muted">
-        {% if entry.status == 'published'  %}
-            <span class="published-at">Published {{entry.published_at}}</span>
-        {% else %}
-            <span class="published-at"><strong>Not Published (created {{entry.created_at}})</strong></span>
-        {% endif %}
-        {% if entry.is_updated %}
-          <span class="updated-at">Last update: {{entry.updated_at}}</span>
-        {% endif %}
-          <a href="{% url entry_edit slug=entry.slug %}">Edit this post</a>
-      </div>
-      {# let me use HTML, I promise I'll behave ;) #}
-      {{ entry.content|safe }}
-      <div class="tags">
-        {% for tag in entry.tags %}
-          <a href="{% url tag_index tag=tag %}">{{tag}}</a><!--
-          -->{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-      </div>
+<article>
+  <h2 class="permalink"><a href="{% url entry_view slug=entry.slug %}">{{entry.title}}</a></h2>
+  <div class="meta muted">
+    {% if entry.published_at %}
+        <span class="published-at">Published <time>{{entry.published_at}}</time></span>
+    {% else %}
+      <span class="published-at"><strong>Not Published (created <time>{{entry.created_at}}</time>)</strong></span>
+    {% endif %}
+    {% if entry.is_updated %}
+      <span class="updated-at">Last update: <time>{{entry.updated_at}}</time></span>
+    {% endif %}
+  </div>
 
+  {# let me use HTML, I promise I'll behave ;) #}
+  {{ entry.content|safe }}
+
+  <div class="tags">
+      <strong>Tags:</strong> {% for tag in entry.tags %}
+        <a href="{% url tag_index tag=tag %}">{{tag}}</a><!--
+        -->{% if not forloop.last %}, {% endif %}
+      {% empty %}
+        None
+      {% endfor %}
+  </div>
+
+  <div class="actions">
+    <a class="btn btn-primary" href="{% url entry_edit slug=entry.slug %}">Edit this Entry</a>
+    <a id="delete-btn" class="btn" href="{% url entry_delete slug=entry.slug %}">Delete this Entry</a>
+  </div>
+</article>
+
+{% endblock %}
+
+
+{% block extrajs %}
+<script type="text/javascript">
+  $.ajaxSetup({
+      data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+  });
+
+  $(function(){
+    $('#delete-btn').click(function(){
+       if (confirm('are you sure you want to delete this entry?')){
+          var the_url = $(this).attr('href');
+          $.ajax({
+              type: 'post',
+              url: the_url,
+              dataType: 'Json',
+              data: {},
+              success: function(data, status, xhr) {
+                 top.location = data.redirect_url;
+              },
+              error: function() { alert('fail'); }
+          });
+          
+       }
+       return false;
+    });
+  });
+</script>
 {% endblock %}

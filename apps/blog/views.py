@@ -6,6 +6,9 @@ from django.views.generic import TemplateView
 from django.views.generic import CreateView
 from django.template import RequestContext
 from django.contrib import messages
+from django.views.decorators.http import require_POST
+from django.utils import simplejson
+from django.http import HttpResponse, Http404
 
 from helpers.paginator import GAEPaginator
 
@@ -57,7 +60,9 @@ class EntryView(TemplateView):
         context = super(EntryView, self).get_context_data(**kwargs)
         slug = self.kwargs['slug']
         entry = Entry.all().filter('slug =', slug).get()
-        # TODO: handle no results
+        if not entry:
+            raise Http404
+
         context['entry'] = entry
         return context
 
@@ -97,3 +102,22 @@ def entry_create(request, slug=None):
         'action_url': action_url
         },
         context_instance=RequestContext(request))
+
+
+@require_POST
+def entry_delete(request, slug=None):
+    data = {}
+    if slug is None:
+        raise Http404
+
+    entry = Entry.all().filter('slug =', slug).get()
+    if not entry:
+        raise Http404
+
+    entry.delete()
+    messages.warning(request, 'Entry deleted')
+    data['redirect_url'] = reverse('blog_index')
+
+    return HttpResponse(simplejson.dumps(data), 
+                        mimetype="application/json")
+

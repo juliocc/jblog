@@ -1,3 +1,4 @@
+@import "compass/typography/links/link-colors";
 
 body {
   padding-top: 60px;
@@ -11,3 +12,14 @@ body {
 .entry {
   margin-bottom: 10px;
 }
+
+article .actions {
+    margin-top: 20px;
+}
+
+
+.permalink a {
+  text-decoration: none;
+  @include link-colors(#333,#333,#333);
+}
+

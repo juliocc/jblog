@@ -3,28 +3,29 @@
 {% block content %}
 
 {% for entry in entries.object_list %}
-  <div class="entry">
-      <h2>{{entry.title}}</h2>
+  <section class="entry">
+      <h2 class="permalink"><a href="{% url entry_view slug=entry.slug %}">{{entry.title}}</a></h2>
       <div class="meta muted">
         {% if entry.published_at %}
-            <span class="published-at">Published {{entry.published_at}}</span>
+            <span class="published-at">Published <time>{{entry.published_at}}</time></span>
         {% else %}
-            <span class="published-at"><strong>Not Published (created {{entry.created_at}})</strong></span>
+            <span class="published-at"><strong>Not Published (created <time>{{entry.created_at}}</time>)</strong></span>
         {% endif %}
         {% if entry.is_updated %}
-          <span class="updated-at">Last update: {{entry.updated_at}}</span>
+          <span class="updated-at">Last update: <time>{{entry.updated_at}}</time></span>
         {% endif %}
       </div>
       {# let me use HTML, I promise I'll behave ;) #}
       {{ entry.content|safe|truncatewords_html:40 }}
       <p><a href="{% url entry_view slug=entry.slug %}">Read more</a></p>
       <div class="tags">
+        <strong>Tags:</strong>
         {% for tag in entry.tags %}
           <a href="{% url tag_index tag=tag %}">{{tag}}</a><!--
           -->{% if not forloop.last %}, {% endif %}
         {% endfor %}
       </div>
-  </div>
+  </section>
 {% empty %}
 
 <p>No blog posts at this time!</p>
@@ -40,6 +41,5 @@
         <a href="?page={{ entries.next_page_number}}">Older &rarr;</a>
       </li>
   </ul>
-
 
 {% endblock %}
