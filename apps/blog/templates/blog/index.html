@@ -3,19 +3,28 @@
 {% block content %}
 
 {% for entry in entries.object_list %}
-  <h2>{{entry.title}}</h2>
-  <div class="meta">
-    <span class="created-at">Published {{entry.published_at}}</span>
-    {% if entry.is_updated %}
-      <span class="updated-at">Last update: {{entry.updated_at}}</span>
-    {% endif %}
+  <div class="entry">
+      <h2>{{entry.title}}</h2>
+      <div class="meta muted">
+        <span class="created-at">Published {{entry.published_at}}</span>
+        {% if entry.is_updated %}
+          <span class="updated-at">Last update: {{entry.updated_at}}</span>
+        {% endif %}
+      </div>
+      {# let me use HTML, I promise I'll behave ;) #}
+      {{ entry.content|safe|truncatewords_html:40 }}
+      <p><a href="{% url entry_view slug=entry.slug %}">more</a></p>
+      <div class="tags">
+        {% for tag in entry.tags %}
+          <a href="{% url tag_index tag=tag %}">{{tag}}</a><!--
+          -->{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </div>
   </div>
-  <p>{{entry.content}}</p>
-  <ul class="tags">
-    {% for tag in entry.tags %}
-      <li>{{tag}}</li>
-    {% endfor %}
-  </ul>
+{% empty %}
+
+<p>No blog posts at this time!</p>
+
 {% endfor %}
 
   <ul class="pager">
@@ -27,5 +36,6 @@
         <a href="?page={{ entries.next_page_number}}">Older &rarr;</a>
       </li>
   </ul>
+
 
 {% endblock %}
