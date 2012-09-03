@@ -32,6 +32,7 @@
 
 {% endfor %}
 
+{% if page.paginator.num_pages > 1 %}
   <ul class="pager">
       <li class="previous {% if not entries.has_previous %}disabled{% endif %}">
         <a href="?page={{ entries.previous_page_number}}">&larr; Newer</a>
@@ -41,5 +42,7 @@
         <a href="?page={{ entries.next_page_number}}">Older &rarr;</a>
       </li>
   </ul>
+{% endif %}
+
 
 {% endblock %}
