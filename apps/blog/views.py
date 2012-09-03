@@ -9,9 +9,9 @@ from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.utils import simplejson
 from django.http import HttpResponse, Http404
+from google.appengine.api import users
 
 from helpers.paginator import GAEPaginator
-
 from apps.blog.models import Entry
 from apps.blog.forms import EntryForm
 
@@ -67,6 +67,26 @@ class EntryView(TemplateView):
         return context
 
 
+class HttpTextResponse(HttpResponse):
+    def __init__(self, *args, **kwargs):
+        kwargs['content_type'] = 'text/plain; charset=utf-8'
+        super(HttpTextResponse, self).__init__(*args, **kwargs)
+
+def admin_required(func):
+    """Decorator that insists that you're logged in as administratior."""
+
+    def admin_wrapper(request, *args, **kwds):
+        if request.user is None:
+            return redirect(
+                users.create_login_url(request.get_full_path().encode('utf-8')))
+        if not request.user_is_admin:
+            return HttpTextResponse(
+                'You must be admin for this function', status=403)
+        return func(request, *args, **kwds)
+
+    return admin_wrapper
+
+@admin_required
 def entry_create(request, slug=None):
     if slug is not None:
         editing = False
@@ -105,6 +125,7 @@ def entry_create(request, slug=None):
 
 
 @require_POST
+@admin_required
 def entry_delete(request, slug=None):
     data = {}
     if slug is None:
@@ -121,3 +142,13 @@ def entry_delete(request, slug=None):
     return HttpResponse(simplejson.dumps(data), 
                         mimetype="application/json")
 
+
+def context_processor(request):
+    params = {}
+    full_path = request.get_full_path().encode('utf-8')
+    user = users.get_current_user()
+    if user is None:
+        params['login_url'] = users.create_login_url(full_path)
+    else:
+        params['logout_url'] = users.create_logout_url(full_path)
+    return params

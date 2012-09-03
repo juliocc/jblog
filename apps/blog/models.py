@@ -23,12 +23,11 @@ class TagListProperty(db.StringListProperty):
 class Entry(HookedModel):
     title = db.StringProperty(required=True)
     content = db.TextProperty()
-
+    author = db.UserProperty(auto_current_user_add=True)
     tags = TagListProperty()
     status = db.StringProperty(required=True, default='draft',
                                choices=['draft', 'published'])
     slug = db.StringProperty()
-
     created_at = db.DateTimeProperty(auto_now_add=True)
     updated_at = db.DateTimeProperty(auto_now=True)
     published_at = db.DateTimeProperty()

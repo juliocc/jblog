@@ -32,8 +32,14 @@
             <ul class="nav">
               {# TODO: fix active class #}
               <li class="active"><a href="{% url blog_index %}">Home</a></li>
-              <!-- <li><a href="{% url hello-world %}">Hello World</a></li> -->
-              <li><a href="{% url entry_create %}">Create Post</a></li>
+              {% if request.user %}
+                 {% if request.user_is_admin %}
+                     <li><a href="{% url entry_create %}">Create Post</a></li>
+                 {% endif %}
+                 <li><a href="{{logout_url}}">Logout</a></li>
+              {% else %}
+                 <li><a href="{{login_url}}">Login</a></li>
+              {% endif %}
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>
@@ -50,6 +56,7 @@
     </div>
   {% endfor %}
 {% endif %}
+
 
       {% block content %}{% endblock %}
 

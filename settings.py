@@ -1,5 +1,6 @@
 import os
 import sys
+import django.conf.global_settings as default
 
 APPENGINE_PRODUCTION = os.getenv('APPENGINE_PRODUCTION')
 
@@ -143,7 +144,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+#    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'apps.blog.middleware.AddUserToRequestMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
@@ -155,8 +157,13 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = default.TEMPLATE_CONTEXT_PROCESSORS + (
+    'apps.blog.views.context_processor',
+    'django.core.context_processors.request',
+)
+
 INSTALLED_APPS = (
-    'django.contrib.auth',
+#    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
