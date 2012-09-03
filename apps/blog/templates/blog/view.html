@@ -5,7 +5,7 @@
 <article>
   <h2 class="permalink"><a href="{% url entry_view slug=entry.slug %}">{{entry.title}}</a></h2>
   <div class="meta muted">
-    {% if entry.published_at %}
+    {% if entry.status == 'published' %}
         <span class="published-at">Published <time>{{entry.published_at}}</time></span>
     {% else %}
       <span class="published-at"><strong>Not Published (created <time>{{entry.created_at}}</time>)</strong></span>
