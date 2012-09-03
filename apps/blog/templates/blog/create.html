@@ -5,6 +5,7 @@
 <form action="{% url entry_create %}" class="form-horizontal"
       method="post">
   {% csrf_token %}
+  {{ form.media }}
   {{ form }}
   <div class="form-actions">
     <button type="submit" class="btn btn-primary">Submit</button>
