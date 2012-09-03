@@ -35,6 +35,7 @@
               {% if request.user %}
                  {% if request.user_is_admin %}
                      <li><a href="{% url entry_create %}">Create Post</a></li>
+                     <li><a href="{% url all_index %}">All Entries</a></li>
                  {% endif %}
                  <li><a href="{{logout_url}}">Logout</a></li>
               {% else %}
