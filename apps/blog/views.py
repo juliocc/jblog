@@ -12,7 +12,7 @@ from django.http import HttpResponse, Http404
 from google.appengine.api import users
 
 from helpers.paginator import GAEPaginator
-from apps.blog.models import Entry
+from apps.blog.models import Entry, Tag
 from apps.blog.forms import EntryForm
 
 class EntriesView(TemplateView):
@@ -34,6 +34,7 @@ class EntriesView(TemplateView):
         context = super(EntriesView, self).get_context_data(**kwargs)
         entries = self.get_page(self.get_query())
         context['entries'] = entries
+        context['cloud'] = Tag.cloud()
         return context
       
 
@@ -48,8 +49,9 @@ class AllIndex(EntriesView):
 
 class TagView(EntriesView):
     def get_query(self):
+        tag = Tag.get_by_key_name(self.kwargs['tag'])
         return Entry.all().filter('status =', 'published') \
-                          .filter('tags =', self.kwargs['tag']) \
+                          .filter('tags =', tag.key()) \
                           .order('-published_at')
   
 
@@ -93,7 +95,7 @@ def entry_create(request, slug=None):
         action_url = reverse('entry_edit', args=[slug])
         initial = {'title': entry.title,
                    'content': entry.content,
-                   'tags': "\n".join(entry.tags),
+                   'tags': "\n".join(tag.name() for tag in entry.tags),
                    'status': entry.status}
     else:
         entry = None
@@ -104,12 +106,39 @@ def entry_create(request, slug=None):
         form = EntryForm(request.POST, initial)
         if form.is_valid():
             if not initial:
+                tags = []
+                for tagtitle in form.cleaned_data['tags']:
+                    tag = Tag.inc_or_insert(tagtitle)
+                    tags.append(tag.key())
+                form.cleaned_data['tags'] = tags
+                
                 entry = Entry(**form.cleaned_data)
                 entry.put()
                 messages.success(request, 'Post created successfully')
             else:
+                initial_tags = [tag.name() for tag in entry.tags]
+                new_tags = form.cleaned_data['tags']
+
+                new = set(new_tags) - set(initial_tags)
+                existing = set(new_tags) & set(initial_tags)
+                deleted = set(initial_tags) - set(new_tags)
+
+                tags = []
+                for tagtitle in deleted:
+                    Tag.try_dec(tagtitle)
+
+                for tagtitle in new_tags:
+                    if tagtitle in new:
+                        tag = Tag.inc_or_insert(tagtitle)
+                        tags.append(tag.key())
+                    elif tagtitle in existing:
+                        tag = Tag.get_by_key_name(tagtitle)
+                        tags.append(tag.key())
+                    else:
+                        raise Exception("what?")
+
+                entry.tags = tags
                 entry.title = form.cleaned_data['title']
-                entry.tags = form.cleaned_data['tags']
                 entry.status = form.cleaned_data['status']
                 entry.content = form.cleaned_data['content']
                 entry.put()

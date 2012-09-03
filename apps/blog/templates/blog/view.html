@@ -20,8 +20,8 @@
 
   <div class="tags">
       <strong>Tags:</strong> {% for tag in entry.tags %}
-        <a href="{% url tag_index tag=tag %}">{{tag}}</a><!--
-        -->{% if not forloop.last %}, {% endif %}
+          <a href="{% url tag_index tag=tag.name %}">{{tag.name}}</a><!--
+          -->{% if not forloop.last %}, {% endif %}
       {% empty %}
         None
       {% endfor %}

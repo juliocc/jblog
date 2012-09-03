@@ -2,6 +2,9 @@
 
 {% block content %}
 
+<div class="row">
+  <div class="span8 ">
+
 {% for entry in entries.object_list %}
   <section class="entry">
       <h2 class="permalink"><a href="{% url entry_view slug=entry.slug %}">{{entry.title}}</a></h2>
@@ -21,7 +24,7 @@
       <div class="tags">
         <strong>Tags:</strong>
         {% for tag in entry.tags %}
-          <a href="{% url tag_index tag=tag %}">{{tag}}</a><!--
+          <a href="{% url tag_index tag=tag.name %}">{{tag.name}}</a><!--
           -->{% if not forloop.last %}, {% endif %}
         {% endfor %}
       </div>
@@ -43,6 +46,18 @@
       </li>
   </ul>
 {% endif %}
+  </div>
 
+<div id="cloud">
+  <strong>Popular tags</strong>
+  <ul id="cloud" class="hero">
+    {% for tag in cloud %}
+        <li class="cloud-size-{{tag.0}}"><a href="{% url tag_index tag=tag.1.title %}">{{tag.1.title}}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+
+</div>
+</div>
 
 {% endblock %}

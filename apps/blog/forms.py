@@ -15,7 +15,7 @@ class EntryForm(BootstrapMixin, forms.Form):
                                         ('published', 'published')])
 
     def clean_tags(self):
-        return [x.strip() for x in self.cleaned_data['tags'].split('\n')]
+        return [x.strip() for x in self.cleaned_data['tags'].split('\n') if x.strip()]
 
     class Meta:
         model = Entry
