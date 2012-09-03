@@ -89,21 +89,30 @@ def admin_required(func):
 @admin_required
 def entry_create(request, slug=None):
     if slug is not None:
-        editing = False
         entry = Entry.all().filter('slug =', slug).get()
         action_url = reverse('entry_edit', args=[slug])
+        initial = {'title': entry.title,
+                   'content': entry.content,
+                   'tags': "\n".join(entry.tags),
+                   'status': entry.status}
     else:
-        editing = True
         entry = None
         action_url = reverse('entry_create')
+        initial = None
 
     if request.method == 'POST':
-        form = EntryForm(request.POST, instance=entry)
+        form = EntryForm(request.POST, initial)
         if form.is_valid():
-            entry = form.save()
-            if editing:
+            if not initial:
+                entry = Entry(**form.cleaned_data)
+                entry.put()
                 messages.success(request, 'Post created successfully')
             else:
+                entry.title = form.cleaned_data['title']
+                entry.tags = form.cleaned_data['tags']
+                entry.status = form.cleaned_data['status']
+                entry.content = form.cleaned_data['content']
+                entry.put()
                 messages.success(request, 'Post modified successfully')
                 
             if entry.status == 'draft':
@@ -115,7 +124,7 @@ def entry_create(request, slug=None):
             
             return redirect('entry_view', entry.slug)
     else:
-        form = EntryForm(instance=entry)
+        form = EntryForm(initial)
 
     return render_to_response('blog/create.html', {
         'form': form,
