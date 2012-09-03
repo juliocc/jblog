@@ -62,14 +62,21 @@ class EntryView(TemplateView):
         return context
 
 
-def entry_create(request):
+def entry_create(request, slug=None):
+    if slug is not None:
+        entry = Entry.all().filter('slug =', slug).get()
+        action_url = reverse('entry_edit', args=[slug])
+    else:
+        entry = None
+        action_url = reverse('entry_create')
+
     if request.method == 'POST':
-        form = EntryForm(request.POST)
+        form = EntryForm(request.POST, instance=entry)
         if form.is_valid():
             entry = form.save()
             messages.success(request, 'Post created successfully')
             if entry.status == 'draft':
-                msg = ('<strong>Warning</strong> The post was created as a '
+                msg = ('<strong>Warning</strong> The post was saved as a '
                        'draft and will not be visisble from the homepage. '
                        'Click <a href="%s">here</a> to view all your posts.'
                        % reverse('all_index'))
@@ -77,9 +84,10 @@ def entry_create(request):
             
             return redirect('blog_index')
     else:
-        form = EntryForm()
+        form = EntryForm(instance=entry)
 
     return render_to_response('blog/create.html', {
-        'form': form
+        'form': form,
+        'action_url': action_url
         },
         context_instance=RequestContext(request))

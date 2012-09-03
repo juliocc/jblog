@@ -13,6 +13,7 @@ class EntryForm(BootstrapMixin, djangoforms.ModelForm):
 
     def clean(self):
         self.cleaned_data['slug'] = str(slugify(self.cleaned_data['title']))
+        # TODO: validate slug
         return super(EntryForm, self).clean()
 
     class Meta:

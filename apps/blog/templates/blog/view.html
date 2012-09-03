@@ -4,7 +4,7 @@
 
       <h2>{{entry.title}}</h2>
       <div class="meta muted">
-        {% if entry.published_at %}
+        {% if entry.status == 'published'  %}
             <span class="published-at">Published {{entry.published_at}}</span>
         {% else %}
             <span class="published-at"><strong>Not Published (created {{entry.created_at}})</strong></span>
@@ -12,6 +12,7 @@
         {% if entry.is_updated %}
           <span class="updated-at">Last update: {{entry.updated_at}}</span>
         {% endif %}
+          <a href="{% url entry_edit slug=entry.slug %}">Edit this post</a>
       </div>
       {# let me use HTML, I promise I'll behave ;) #}
       {{ entry.content|safe }}

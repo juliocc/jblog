@@ -26,7 +26,7 @@
             <ul class="nav">
               {# TODO: fix active class #}
               <li class="active"><a href="{% url blog_index %}">Home</a></li>
-              <li><a href="{% url hello-world %}">Hello World</a></li>
+              <!-- <li><a href="{% url hello-world %}">Hello World</a></li> -->
               <li><a href="{% url entry_create %}">Create Post</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
@@ -46,6 +46,7 @@
 {% endif %}
 
       {% block content %}{% endblock %}
+
     </div>
 
     <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>

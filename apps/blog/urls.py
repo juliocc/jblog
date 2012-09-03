@@ -9,4 +9,5 @@ urlpatterns = patterns('',
     url(r'^tag/(?P<tag>\w+)/$', TagView.as_view(), name='tag_index'),
     url(r'^entries/(?P<slug>[\w\d_-]+)/$', EntryView.as_view(), name='entry_view'),
     url(r'^post/$', entry_create, name='entry_create'),
+    url(r'^edit/(?P<slug>[\w\d_-]+)/$', entry_create, name='entry_edit'),
 )

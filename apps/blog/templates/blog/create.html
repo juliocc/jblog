@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="{% url entry_create %}" class="form-horizontal"
+<form action="{{ action_url }}" class="form-horizontal"
       method="post">
   {% csrf_token %}
   {{ form.media }}

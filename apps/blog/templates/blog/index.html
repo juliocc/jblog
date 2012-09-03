@@ -17,7 +17,7 @@
       </div>
       {# let me use HTML, I promise I'll behave ;) #}
       {{ entry.content|safe|truncatewords_html:40 }}
-      <p><a href="{% url entry_view slug=entry.slug %}">more</a></p>
+      <p><a href="{% url entry_view slug=entry.slug %}">Read more</a></p>
       <div class="tags">
         {% for tag in entry.tags %}
           <a href="{% url tag_index tag=tag %}">{{tag}}</a><!--
