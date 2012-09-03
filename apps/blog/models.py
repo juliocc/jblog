@@ -10,7 +10,7 @@ class Entry(HookedModel):
     tags = db.StringListProperty()
     status = db.StringProperty(required=True, default='draft',
                                choices=['draft', 'published'])
-    slug = db.StringProperty()
+    slug = db.StringProperty(required=True)
 
     created_at = db.DateTimeProperty(auto_now_add=True)
     updated_at = db.DateTimeProperty(auto_now=True)

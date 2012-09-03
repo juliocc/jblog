@@ -1,12 +1,13 @@
 import logging
 from django.views.generic import TemplateView
 from django.conf import settings
-
+from django.contrib import messages
 
 class HelloWorld(TemplateView):
     template_name = "hello-world.html"
     
     def get(self, request, *args, **kwargs):
+        messages.info(request, 'Hello world.')
         self.request.session['message'] = 'Sessions seem okay!'
         return super(HelloWorld, self).get(request, *args, **kwargs)
 

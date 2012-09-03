@@ -1,8 +1,16 @@
+from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
+from django.shortcuts import render_to_response, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import TemplateView
+from django.views.generic import CreateView
+from django.template import RequestContext
+from django.contrib import messages
+
+from helpers.paginator import GAEPaginator
 
 from apps.blog.models import Entry
-from helpers.paginator import GAEPaginator
+from apps.blog.forms import EntryForm
 
 class EntriesView(TemplateView):
     http_method_names = ['get']
@@ -31,12 +39,16 @@ class BlogIndex(EntriesView):
         return Entry.all().filter('status =', 'published') \
                           .order('-published_at')
 
+class AllIndex(EntriesView):
+    def get_query(self):
+        return Entry.all().order('-created_at')
 
 class TagView(EntriesView):
     def get_query(self):
         return Entry.all().filter('status =', 'published') \
                           .filter('tags =', self.kwargs['tag']) \
                           .order('-published_at')
+  
 
 class EntryView(TemplateView):
     template_name = 'blog/view.html'
@@ -48,3 +60,26 @@ class EntryView(TemplateView):
         # TODO: handle no results
         context['entry'] = entry
         return context
+
+
+def entry_create(request):
+    if request.method == 'POST':
+        form = EntryForm(request.POST)
+        if form.is_valid():
+            entry = form.save()
+            messages.success(request, 'Post created successfully')
+            if entry.status == 'draft':
+                msg = ('<strong>Warning</strong> The post was created as a '
+                       'draft and will not be visisble from the homepage. '
+                       'Click <a href="%s">here</a> to view all your posts.'
+                       % reverse('all_index'))
+                messages.warning(request, mark_safe(msg))
+            
+            return redirect('blog_index')
+    else:
+        form = EntryForm()
+
+    return render_to_response('blog/create.html', {
+        'form': form
+        },
+        context_instance=RequestContext(request))

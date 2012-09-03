@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jblog - {% block headtitle %}{% endblock %}</title>
+    <title>jblog {% block headtitle %}{% endblock %}</title>
     <link href="{{STATIC_URL}}css/bootstrap.min.css" rel="stylesheet">
     <link href="{{STATIC_URL}}css/style.css" rel="stylesheet">
     <link href="{{STATIC_URL}}css/bootstrap-responsive.min.css" rel="stylesheet">
@@ -26,6 +26,7 @@
               {# TODO: fix active class #}
               <li class="active"><a href="{% url blog_index %}">Home</a></li>
               <li><a href="{% url hello-world %}">Hello World</a></li>
+              <li><a href="{% url entry_create %}">Create Post</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>
@@ -35,6 +36,14 @@
     </div>
 
     <div class="container">
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
       {% block content %}{% endblock %}
     </div>
 

@@ -4,7 +4,11 @@
 
       <h2>{{entry.title}}</h2>
       <div class="meta muted">
-        <span class="created-at">Published {{entry.published_at}}</span>
+        {% if entry.published_at %}
+            <span class="published-at">Published {{entry.published_at}}</span>
+        {% else %}
+            <span class="published-at"><strong>Not Published (created {{entry.created_at}})</strong></span>
+        {% endif %}
         {% if entry.is_updated %}
           <span class="updated-at">Last update: {{entry.updated_at}}</span>
         {% endif %}
